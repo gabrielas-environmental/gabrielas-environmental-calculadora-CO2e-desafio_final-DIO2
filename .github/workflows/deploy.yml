@@ -1,0 +1,46 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+# Permite que o workflow publique no GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Garante que só um deploy rode por vez
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Gera js/config.js a partir do template, injetando a chave real via Secret
+      - name: Inject API key
+        run: |
+          cp js/config.example.js js/config.js
+          sed -i "s|SUA_CHAVE_AQUI|${{ secrets.GOOGLE_MAPS_API_KEY }}|g" js/config.js
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

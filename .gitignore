@@ -1,0 +1,12 @@
+# Chave de API real — nunca commitar
+js/config.js
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
